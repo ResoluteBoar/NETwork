@@ -1,6 +1,7 @@
 package com.example.network
 
 import android.util.Log
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
@@ -19,7 +20,7 @@ class HttpConnectionNetwork {
         val country: String
     )
 
-    fun test(){
+    public fun test():Movie{
         val urlString = "${BuildConfig.API_BASE_URL}/Top250Movies/${BuildConfig.API_KEY}"
 
         val urlObj = URL(urlString)
@@ -41,12 +42,14 @@ class HttpConnectionNetwork {
 
             val builder = GsonBuilder()
             val gson = builder.create()
-            val movies = gson.fromJson(response, Movie::class.java)
+            var movies = gson.fromJson(response, Movie::class.java);
             val json = gson.toJson(movies)
             movies.toString()
             Log.i("response",response.toString())
+            return movies
         } else{
             println("ERROR -> $responseCode")
+            return Movie("none",0, "none")
         }
     }
 }

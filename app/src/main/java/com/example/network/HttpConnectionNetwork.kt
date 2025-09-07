@@ -20,7 +20,7 @@ class HttpConnectionNetwork {
         val country: String
     )
 
-    public fun test():Movie{
+    public fun test() :Movie{
         val urlString = "${BuildConfig.API_BASE_URL}/Top250Movies/${BuildConfig.API_KEY}"
 
         val urlObj = URL(urlString)

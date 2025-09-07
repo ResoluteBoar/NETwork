@@ -11,6 +11,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.room.Dao
+import androidx.room.Entity
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     private val dbHelper by lazy {DbHelper(this)}
 
+    private val movieDao by lazy {  }
+
     private var initCount = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +41,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val savedCounter = getCounterData(this)
+
         if (savedInstanceState != null) {
-            Log.i("InitCount", savedInstanceState.getInt(KEY_COUNT).toString())
-            if (savedInstanceState.getInt(KEY_COUNT) == 3){
-                findViewById<TextView>(R.id.textHello).text = "Third Initialization"
+            Log.i("InitCount", savedCounter.toString())
+            if (savedCounter == 3){
+                setContentView(R.layout.third_init_intro)
                 initCount = 0
             }
         }
@@ -50,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         Thread{
             try {
-                saveDataToDB(HttpConnectionNetwork.test())
+//                saveDataToDB(HttpConnectionNetwork.test())
             } catch (e:Exception){
                 println("ERROR - ${e.message}")
             }
@@ -59,24 +65,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        initCount++
+
         outState.putInt(KEY_COUNT,initCount)
         Log.i("Save","SavedState")
     }
 
+    override fun onDestroy() {
+        initCount++
+        saveCounterData(this, initCount)
+        super.onDestroy()
+    }
+
     private fun getDataFromDB(context: Context): String{
-        var count = 0
         val name = "null"
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM ${DbHelper.TABLE_NAME} WHERE $_ID = ?", arrayOf("1") )
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
 
-        if (cursor.moveToFirst()){
-            val id = cursor.getInt(cursor.getColumnIndex(_ID))
-            val name = cursor.getString(1)
-            count = cursor.getString(2)
-        }
+//        if (cursor.moveToFirst()){
+//            val id = cursor.getInt(cursor.getColumnIndex(_ID))
+//            val name = cursor.getString(1)
+//            count = cursor.getString(2)
+//        }
 
         cursor.close()
         db.close()

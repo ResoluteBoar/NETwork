@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-abstract class MovieDao {
+interface MovieDao {
     @Query("SELECT * FROM entities WHERE name = :name")
     abstract suspend fun getMovieNames(name: String): List<MovieName>
 

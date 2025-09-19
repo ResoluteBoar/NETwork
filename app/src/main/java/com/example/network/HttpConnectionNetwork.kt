@@ -19,8 +19,13 @@ class HttpConnectionNetwork {
         @SerializedName("country")
         val country: String
     )
-
-    public fun test() :Movie{
+    data class MovieList(
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("list")
+        val list: List<Movie>
+    )
+    public fun test() :MovieList{
         val urlString = "${BuildConfig.API_BASE_URL}/Top250Movies/${BuildConfig.API_KEY}"
 
         val urlObj = URL(urlString)
@@ -44,12 +49,12 @@ class HttpConnectionNetwork {
             val gson = builder.create()
             var movies = gson.fromJson(response, Movie::class.java);
             val json = gson.toJson(movies)
-            movies.toString()
+            movies.toList()
             Log.i("response",response.toString())
             return movies
         } else{
             println("ERROR -> $responseCode")
-            return Movie("none",0, "none")
+            return MovieList("none", listOf())
         }
     }
 }
